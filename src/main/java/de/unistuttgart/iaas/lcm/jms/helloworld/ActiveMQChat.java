@@ -47,8 +47,18 @@ public class ActiveMQChat {
                 } else {
                     Topic chosenTopic = session.createTopic(topicname);
                     producer = session.createProducer(chosenTopic);
+                    System.out.println("Joining topic " + chosenTopic);
                     subscribe(chosenTopic);
                 }
+            } else if ("talk-to".equals(parts[0])){
+                String partner = parts[1];
+                String topicname = "";
+                topicname += (user.compareTo(partner) > 0)? partner : user;
+                topicname += (user.compareTo(partner) > 0)? user : partner;
+                Topic privateTopic = session.createTopic(topicname);
+                producer = session.createProducer(privateTopic);
+                System.out.println("Joined private Topic " + topicname);
+                subscribe(privateTopic);
             }
             else {
                 TextMessage msg = session.createTextMessage(chatMsg);
